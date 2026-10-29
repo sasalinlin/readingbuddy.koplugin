@@ -20,6 +20,7 @@ local InfoMessage = require("ui/widget/infomessage")
 local InputDialog = require("ui/widget/inputdialog")
 local JSON = require("json")
 local Menu = require("ui/widget/menu")
+local Notification = require("ui/widget/notification")
 local MultiInputDialog = require("ui/widget/multiinputdialog")
 local NetworkMgr = require("ui/network/manager")
 local TextViewer = require("ui/widget/textviewer")
@@ -36,6 +37,7 @@ local util = require("util")
 local Screen = Device.screen
 
 local I18n = require("rb_i18n")
+local Pet = require("rb_pet")
 local L = I18n.L
 
 -- MARK: - 陪读朋友的性格（照抄 App 的 Persona）
@@ -528,9 +530,15 @@ function ReadingBuddy:onDispatcherRegisterActions()
     Dispatcher:registerAction("readingbuddy_chat", {
         category = "none", event = "ReadingBuddyChat", title = "Reading Buddy", reader = true,
     })
+    Dispatcher:registerAction("readingbuddy_pet", {
+        category = "none", event = "ReadingBuddyPet", title = L("云朵的小屋"), reader = true,
+    })
 end
 
 function ReadingBuddy:init()
+    -- 云朵的读书字数：每秒最多算 Pet.RATE 字，攒着用，最多攒 3000
+    self._budget = 800
+    self._budget_at = os.time()
     self:onDispatcherRegisterActions()
     self.ui.menu:registerToMainMenu(self)
     if self.ui.view and self.ui.registerTouchZones then
@@ -622,7 +630,32 @@ function ReadingBuddy:updateFurthest()
     if not f or cmp == nil or cmp > 0 then
         d.furthest = cur
         self.ui.doc_settings:saveSetting("readingbuddy", d)
+        if f and cmp then self:countRead(f, cur) end
     end
+end
+
+--- 往前读了新的字：记给云朵（翻得太快、跳着翻的不算）
+function ReadingBuddy:countRead(from, to)
+    local now = os.time()
+    self._budget = math.min(3000, self._budget + (now - self._budget_at) * Pet.RATE)
+    self._budget_at = now
+    local text = self.ui.document:getTextFromXPointers(from, to) or ""
+    local gained = utf8len((text:gsub("%s", "")))
+    if gained > Pet.MAX_JUMP then return end
+    local counted = math.min(gained, math.floor(self._budget))
+    if counted <= 0 then return end
+    self._budget = self._budget - counted
+    local gifts, cleaned = Pet.addRead(counted)
+    if gifts > 0 then
+        Notification:notify(L("云朵收到了礼物盒！去小屋拆开看看吧～"), Notification.SOURCE_ALWAYS_SHOW)
+    elseif cleaned then
+        Notification:notify(L("云朵的小屋打扫干净啦！"), Notification.SOURCE_ALWAYS_SHOW)
+    end
+end
+
+function ReadingBuddy:onReadingBuddyPet()
+    Pet.showHome()
+    return true
 end
 
 function ReadingBuddy:onPageUpdate()
@@ -942,6 +975,12 @@ function ReadingBuddy:compose(show_keyboard)
             UIManager:close(dialog)
             self:showChat()
         end },
+        { text = L("云朵的小屋"), callback = function()
+            UIManager:close(dialog)
+            Pet.showHome()
+        end },
+    })
+    table.insert(buttons, {
         { text = L("取消"), id = "close", callback = function() UIManager:close(dialog) end },
         { text = L("发送"), is_enter_default = true, callback = function() send(dialog:getInputText()) end },
     })
@@ -1102,6 +1141,10 @@ function ReadingBuddy:addToMainMenu(menu_items)
             {
                 text = L("打开聊天"),
                 callback = function() self:showChat() end,
+            },
+            {
+                text = L("云朵的小屋"),
+                callback = function() Pet.showHome() end,
             },
             {
                 text = L("页面右下角显示陪读小人头"),

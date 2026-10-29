@@ -7,6 +7,11 @@
   <img src="screenshots/quick-chat.png" width="32%" alt="Quick chat dialog">
   <img src="screenshots/highlight-menu.png" width="32%" alt="Rant / Ask in the highlight menu">
 </p>
+<p>
+  <img src="screenshots/pet-empty.png" width="32%" alt="Cloudy's house at the start">
+  <img src="screenshots/pet-full.png" width="32%" alt="Cloudy's house full of furniture">
+  <img src="screenshots/pet-dusty.png" width="32%" alt="Cloudy's house after a week without reading">
+</p>
 
 ---
 
@@ -26,6 +31,7 @@
   - 你问到某个人名、词（选中它，或者在问题里用「」括起来），会去前文里找它出现过的地方一起发给 AI，方便回答「这个人前面出现过吗」。
 - **四种陪读性格**：毒舌搭子（双马尾）、温柔解答（长发）、考据党（眼镜）、自定义（丸子头）。
 - **任意 AI 服务商、任意模型**：Claude（Anthropic）、ChatGPT（OpenAI）、Gemini、DeepSeek、通义千问、Kimi、智谱 GLM、豆包、OpenRouter，以及任何兼容 OpenAI 格式的接口（包括局域网里的 Ollama 等本地模型）。可以从服务商拉取模型列表。
+- **读书小宠物「云朵」的小屋**：小屋一开始空空的。每天读到 2000 字得一份零食，5000 字、1 万字各得一件家具摆饰，2 万字得一件稀有摆饰，读得越多家里越丰富（一共 20 件）。零食可以投喂给云朵。好几天没读书，屋子会落灰、变旧（东西不会丢），读够 1000 字就打扫干净。只算真正往前读过的字，翻太快、跳着翻的不算。入口在「聊聊」框里，或者 菜单 › Reading Buddy › 云朵的小屋。
 - **中文 / 英文界面**：跟着 KOReader 的语言设置走。
 
 ### 安装
@@ -50,12 +56,13 @@
 ### 隐私
 
 - 只会把你读到的位置之前的书中文字，和你发的聊天内容，发给**你自己选的** AI 服务商。插件作者收不到任何东西。
-- 前情提要和聊天记录存在这本书旁边的 `.sdr` 文件夹里（KOReader 存阅读进度的地方）。
+- 前情提要和聊天记录存在这本书旁边的 `.sdr` 文件夹里（KOReader 存阅读进度的地方）。云朵的小屋存在 KOReader 的设置里，不会发给任何人。
 
 ### 已知限制
 
 - 只支持可以重排的书（epub、txt、fb2、mobi 等）。PDF、漫画不行。
 - 墨水屏上不显示 Markdown。
+- 云朵按字符数算字（不算空格），英文书每个字母都算一个，所以读英文书拿礼物会快一些。
 - 从一本长书的中间开始第一次聊天，需要先补做很多段前情提要，会比较慢，也会多花一点额度。
 - 如果从目录往后跳着翻过，AI 会以为那些也读过了。可以在「这本书的设置 → 把读到的最远位置改成当前页」改回来。
 
@@ -85,6 +92,7 @@ It **only knows what you've read so far**, so it never spoils anything. Rant abo
   - names or words you ask about (highlighted, or quoted in your question) are looked up in the earlier text, so the AI can answer "did this character show up before?"
 - **Four personalities**: Snarky Pal, Gentle Guide, Detail Detective, or write your own.
 - **Any AI provider, any model**: Claude (Anthropic), ChatGPT (OpenAI), Gemini, DeepSeek, Qwen, Kimi, Zhipu GLM, Doubao, OpenRouter, or any OpenAI-compatible API (including a local Ollama on your Wi-Fi). It can fetch the model list from your provider.
+- **Cloudy's House, a little reading pet**: the house starts empty. Each day, 2,000 characters read earns a snack, 5,000 and 10,000 each earn a furniture piece, and 20,000 earns a rare decoration, so the more you read, the cozier it gets (20 pieces in all). Feed snacks to Cloudy. Skip reading for a few days and the house gets dusty and shabby (nothing is lost); read 1,000 characters to clean it up. Only new text you actually read counts. Open it from the chat box or menu › Reading Buddy › Cloudy's House.
 - **Chinese / English UI**: follows KOReader's language setting.
 
 ### Install
@@ -109,12 +117,13 @@ It **only knows what you've read so far**, so it never spoils anything. Rant abo
 ### Privacy
 
 - Only the book text before your reading position, plus your chat messages, are sent, and only to **the AI provider you chose**. The plugin author receives nothing.
-- Summaries and chat history are stored in the book's `.sdr` sidecar folder.
+- Summaries and chat history are stored in the book's `.sdr` sidecar folder. Cloudy's house is kept in KOReader's settings and never sent anywhere.
 
 ### Known limitations
 
 - Reflowable books only (epub, txt, fb2, mobi, ...). No PDF or comics.
 - Markdown isn't rendered on e-ink.
+- Cloudy counts characters (not words, spaces excluded), so English books earn gifts faster than Chinese ones.
 - The first chat in the middle of a long book needs many summaries first, so it's slow and uses more API credit.
 - If you skip ahead via the table of contents, the AI assumes you've read it. Use "This book → Set furthest read to this page" to fix that.
 
